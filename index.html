@@ -52,7 +52,7 @@
             { "ticker": "ROSN", "name": "Роснефть", "margin": 46, "suit": "diamonds" },
             { "ticker": "LENT", "name": "Лента", "margin": 40, "suit": "clubs" },
             { "ticker": "SMLT", "name": "ГК Самолет", "margin": 38, "suit": "hearts" },
-            { "ticker": "SBER", "name": "Сбер Банк", "margin": 31, "suit": "spades" },
+            { "ticker": "SBER", "name": "СберБанк", "margin": 31, "suit": "spades" },
             { "ticker": "PLZL", "name": "Полюс", "margin": 30, "suit": "diamonds" },
             { "ticker": "VKCO", "name": "ВК", "margin": 24, "suit": "clubs" },
             { "ticker": "VTBR", "name": "Банк ВТБ", "margin": 19, "suit": "hearts" },
@@ -62,11 +62,11 @@
             { "ticker": "KMAZ", "name": "КАМАЗ", "margin": 10, "suit": "hearts" },
             { "ticker": "APTK", "name": "Аптечная сеть 36,6", "margin": 9, "suit": "spades" },
             { "ticker": "RUAL", "name": "РУСАЛ", "margin": 2, "suit": "diamonds" },
-            { "ticker": "GMKN", "name": "Норильский никель", "margin": 1, "suit": "clubs" },
+            { "ticker": "GMKN", "name": "Норникель", "margin": 1, "suit": "clubs" },
             { "ticker": "MVID", "name": "М.Видео", "margin": -3, "suit": "hearts" },
             { "ticker": "GAZP", "name": "Газпром", "margin": -8, "suit": "spades" },
             { "ticker": "HYDR", "name": "РусГидро", "margin": -13, "suit": "diamonds" },
-            { "ticker": "FIXP", "name": "Fix Price Group", "margin": -15, "suit": "clubs" },
+            { "ticker": "FIXP", "name": "Fix Price", "margin": -15, "suit": "clubs" },
             { "ticker": "AMEZ", "name": "Ашинский метзавод", "margin": -23, "suit": "hearts" },
             { "ticker": "CARM", "name": "КарМани", "margin": -24, "suit": "spades" },
             { "ticker": "SGZH", "name": "Сегежа", "margin": -33, "suit": "diamonds" },
@@ -149,7 +149,7 @@
         }
 
         // Если игрок еще не готов закончить игру и есть закрытые карты - это не финиш
-        if (!finishGame && opened < 5) return
+        if (!finishGame && opened < 5 && total < 21) return
 
         // Супер интеллектуальный алгоритм дилера
         dealerTotal = 0
@@ -174,8 +174,8 @@
         }
         Alpine.store(
             'modalText', { value:
-                "Вы набрали [ " + total + " ] очков, а дилер [ " + dealerTotal + " ]<br/><br/>" +
-                "<a class='bg-accent pl-8 pr-8 py-4' href='https://www.tinkoff.ru/invest/web-terminal/'> Стать Инвестором </a>"
+                "<div class='justify-center'>Вы набрали [ " + total + " ] очков, а дилер [ " + dealerTotal + " ]<br/><br/><br/><br/>" +
+                "<a class='bg-accent pl-8 pr-8 py-4 text-white' href='https://www.tinkoff.ru/invest/web-terminal/'> ↠ Стать Инвестором ↞ </a></div>"
             })
 
         results_modal.showModal()
@@ -185,9 +185,9 @@
 </head>
 <body>
 
-<div class="h-dvh max-h-full md:max-h-screen">
+<div class="w-full md:w-5/6 lg:w-3/4" style="margin: 0 auto;">
 
-    <div x-data="{ }" class="flex justify-end pt-6 pr-8">
+    <div x-data="{ }" class="flex justify-center pt-8">
         ДЕНЬ
         <input
             type="checkbox"
@@ -238,14 +238,15 @@
                   />
                 </figure>
                 <div class="card-body items-center text-center">
-                  <h1 class="text-2xl pt-1 pb-2" x-text="card.ticker"
+                  <h1 class="text-2xl pt-1 pb-2 md:text-2xl text-base" x-text="card.ticker"
                   :style="card.open ? 'visibility: visible' : 'visibility: hidden'"
                   ></h1>
                   <p x-text="card.name"
                   :style="card.open ? 'visibility: visible' : 'visibility: hidden'"
+                  class="text-base sm:text-sm"
                   ></p>
                   <h2
-                      class="py-1 pl-10 pr-10 text-white rounded"
+                      class="py-1 pl-6 md:pl-10 pr-6 md:pr-10 text-white rounded"
                       :style="card.open ? 'visibility: visible' : 'visibility: hidden'"
                       :class="card.color"
                       x-text="card.margin + '%'">
@@ -261,7 +262,7 @@
     <div x-data id="cards" class="grid grid-cols-7 gap-4 pt-10 pb-10">
       <div class="card col-span-1"></div>
     <div class="flex justify-center col-span-5">
-        <button class="btn btn-block items-center bg-base-content text-white" x-on:click="finish(true)">Идеально!</button>
+        <button class="btn btn-block items-center bg-base-content text-white" x-on:click="finish(true)">ИДЕАЛЬНО!</button>
       </div>
         <div class="card col-span-1"></div>
     </div>
@@ -269,13 +270,13 @@
     <!-- modal -->
 
     <dialog id="results_modal" class="modal">
-    <div class="modal-box" x-data="{}">
-        <h3 class="font-bold text-lg" x-text="$store.modalHeader.value">И кто же тут красавчик?</h3>
-        <p class="py-4" x-html="$store.modalText.value"></p>
-        <div class="modal-action">
+    <div class="modal-box justify-center content-center text-center" x-data="{}">
+        <h1 class="font-bold text-lg" x-text="$store.modalHeader.value">И кто же тут красавчик?</h1>
+        <p class="py-8 justify-center content-center text-center" x-html="$store.modalText.value"></p>
+        <div class="modal-action justify-center content-center text-center">
           <form method="dialog">
             <!-- if there is a button in form, it will close the modal -->
-            <button class="btn">Прекрасно!</button>
+            <button class="btn mt-4 mb-8">ПРЕКРАСНО!</button>
           </form>
         </div>
     </div>
