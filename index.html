@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" > <!-- != 'light' ? 'dark' : 'light'" -->
+<head>
+
+    <meta charset="UTF-8">
+    <title>BlackJack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--<link rel="icon" type="image/x-icon" href="three-cards-svgrepo-com.svg">-->
+    <!--<link rel="icon" href="three-cards-svgrepo-com.svg" sizes="any" type="image/svg+xml">-->
+    <link rel="icon" href="ace-of-spades-svgrepo-com.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="ace-of-spades-svgrepo-com.ico" sizes="any">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
+
+    <style>
+        body, html {
+          font-family: "Dela Gothic One", sans-serif;
+          font-weight: 400;
+          font-style: normal;
+        }
+    </style>
+
+    <script>
+    cards = []
+    document.addEventListener('alpine:init', () => {
+        // Alpine.data(...)
+        init()
+    })
+    document.addEventListener('alpine:initialized', () => {
+        //init()
+    })
+    function init() {
+
+        rowShares = [
+            // { "ticker": "AAPL", "name": "Apple", "margin": 66, "suit": "hearts", "image": "cards/jack_of_hearts2.svg" },
+            // { "ticker": "MSFT", "name": "Microsoft", "margin": 32, "suit": "spades", "image": "cards/5_of_clubs.svg" },
+            // { "ticker": "SBER", "name": "Сбербанк", "margin": 106, "suit": "diamonds", "image": "cards/jack_of_spades.svg" },
+            // { "ticker": "GAZP", "name": "Газпром", "margin": -8, "suit": "diamonds", "image": "cards/4_of_hearts.svg" },
+            // { "ticker": "MTSS", "name": "МТС", "margin": 15, "suit": "diamonds", "image": "cards/queen_of_hearts2.svg" },
+
+            { "ticker": "TATN", "name": "Татнефть", "margin": 75, "suit": "diamonds" },
+            { "ticker": "POSI", "name": "Positive Technologies", "margin": 74, "suit": "clubs" },
+            { "ticker": "LKOH", "name": "ЛУКОЙЛ", "margin": 67, "suit": "hearts" },
+            { "ticker": "SELG", "name": "Селигдар", "margin": 47, "suit": "spades" },
+            { "ticker": "ROSN", "name": "Роснефть", "margin": 46, "suit": "diamonds" },
+            { "ticker": "LENT", "name": "Лента", "margin": 40, "suit": "clubs" },
+            { "ticker": "SMLT", "name": "ГК Самолет", "margin": 38, "suit": "hearts" },
+            { "ticker": "SBER", "name": "Сбер Банк", "margin": 31, "suit": "spades" },
+            { "ticker": "PLZL", "name": "Полюс", "margin": 30, "suit": "diamonds" },
+            { "ticker": "VKCO", "name": "ВК", "margin": 24, "suit": "clubs" },
+            { "ticker": "VTBR", "name": "Банк ВТБ", "margin": 19, "suit": "hearts" },
+            { "ticker": "MTSS", "name": "МТС", "margin": 15, "suit": "spades" },
+            { "ticker": "ABRD", "name": "АбрауДюрсо", "margin": 14, "suit": "diamonds" },
+            { "ticker": "ALRS", "name": "АЛРОСА", "margin": 13, "suit": "clubs" },
+            { "ticker": "KMAZ", "name": "КАМАЗ", "margin": 10, "suit": "hearts" },
+            { "ticker": "APTK", "name": "Аптечная сеть 36,6", "margin": 9, "suit": "spades" },
+            { "ticker": "RUAL", "name": "РУСАЛ", "margin": 2, "suit": "diamonds" },
+            { "ticker": "GMKN", "name": "Норильский никель", "margin": 1, "suit": "clubs" },
+            { "ticker": "MVID", "name": "М.Видео", "margin": -3, "suit": "hearts" },
+            { "ticker": "GAZP", "name": "Газпром", "margin": -8, "suit": "spades" },
+            { "ticker": "HYDR", "name": "РусГидро", "margin": -13, "suit": "diamonds" },
+            { "ticker": "FIXP", "name": "Fix Price Group", "margin": -15, "suit": "clubs" },
+            { "ticker": "AMEZ", "name": "Ашинский метзавод", "margin": -23, "suit": "hearts" },
+            { "ticker": "CARM", "name": "КарМани", "margin": -24, "suit": "spades" },
+            { "ticker": "SGZH", "name": "Сегежа", "margin": -33, "suit": "diamonds" },
+        ]
+
+        shares = []
+        //for share in shares {
+        for (i = 0; i < rowShares.length; i++) {
+            //console.log(i)
+            share = Object.assign({}, rowShares[i]);
+            share.open = false
+            share.color = 'bg-success'
+            if (share.margin < 20) {
+                share.color = 'bg-error'
+            } else if (share.margin < 40) {
+                share.color = 'bg-warning'
+            } else if (share.margin < 60) {
+                share.color = 'bg-accent'
+            }
+            if (share.margin < 0) {
+                share.value = 1
+                share.image = "cards/ace_of_" + share.suit + ".svg"
+            } else if (share.margin > 70) {
+                share.value = 10
+                share.image = "cards/king_of_" + share.suit + "2.svg"
+            } else if (share.margin > 60) {
+                share.value = 10
+                share.image = "cards/king_of_" + share.suit + "2.svg"
+            } else if (share.margin > 45) {
+                share.value = 10
+                share.image = "cards/queen_of_" + share.suit + "2.svg"
+            } else if (share.margin > 30) {
+                share.value = 10
+                share.image = "cards/jack_of_" + share.suit + "2.svg"
+            } else {
+                share.value = Math.floor(share.margin / 5) + 2 // 2 .. 9
+                share.image = "cards/" + share.value + "_of_" + share.suit + ".svg"
+            }
+            shares.push(share)
+        }
+
+
+        cards = []
+        for (i = 0; i < 5; i++) {
+            card = Object.assign({}, shares[ Math.floor(Math.random() * shares.length) ]);
+            card.num = i
+            if (i < 2) card.open = true
+            cards.push(card)
+        }
+
+        dealerCards = []
+        for (i = 0; i < 5; i++) {
+            card = Object.assign({}, shares[ Math.floor(Math.random() * shares.length) ]);
+            card.num = i
+            dealerCards.push(card)
+        }
+
+        // Alpine.store('theme', { value: 'light' })
+
+        Alpine.store('cards', { items: cards })
+        Alpine.store('dealerCards', { items: dealerCards })
+
+        Alpine.store('modalHeader', { value: "" })
+        Alpine.store('modalText', { value: "" })
+    }
+
+    function show() {
+
+    }
+
+    function finish(finishGame) {
+
+        opened = 0
+        total = 0
+        for (i = 0; i < Alpine.store('cards').items.length; i++) {
+            if (Alpine.store('cards').items[i].open == true) {
+                opened++
+                total += Alpine.store('cards').items[i].value
+            }
+        }
+
+        // Если игрок еще не готов закончить игру и есть закрытые карты - это не финиш
+        if (!finishGame && opened < 5) return
+
+        // Супер интеллектуальный алгоритм дилера
+        dealerTotal = 0
+        for (i = 0; i < Alpine.store('dealerCards').items.length; i++) {
+            //if (Alpine.store('dealerCards').items[i].open == true) {
+              //  opened++
+                //count += Alpine.store('dealerCards').items[i].value
+            //}
+            Alpine.store('dealerCards').items[i].open = true
+            dealerTotal += Alpine.store('dealerCards').items[i].value
+
+            if (dealerTotal >= 16) break; // NB!
+        }
+
+        Alpine.store('total', { items: cards })
+        Alpine.store('dealerTotal', { items: cards })
+
+        if (total > 21 || dealerTotal > total) {
+            Alpine.store('modalHeader', { value: "Печально, но вы проиграли :(" })
+        } else {
+            Alpine.store('modalHeader', { value: "Кто бы сомневался - победа за вами :)" })
+        }
+        Alpine.store(
+            'modalText', { value:
+                "Вы набрали [ " + total + " ] очков, а дилер [ " + dealerTotal + " ]<br/><br/>" +
+                "<a class='bg-accent pl-8 pr-8 py-4' href='https://www.tinkoff.ru/invest/web-terminal/'> Стать Инвестором </a>"
+            })
+
+        results_modal.showModal()
+    }
+
+    </script>
+</head>
+<body>
+
+<div class="h-dvh max-h-full md:max-h-screen">
+
+    <div x-data="{ }" class="flex justify-end pt-6 pr-8">
+        ДЕНЬ
+        <input
+            type="checkbox"
+            class="toggle ml-2 mr-2" unchecked
+            x-on:change="html = document.querySelector('html'); color = html.getAttribute('data-theme'); if (color == 'light') { color = 'dark' } else { color = 'light' }; html.setAttribute('data-theme', color);"
+        />
+        НОЧЬ
+    </div>
+
+    <!-- dealer cards -->
+
+    <div x-data id="dealerCards" class="grid grid-cols-7 gap-4 pt-10">
+    <div class="card col-span-1"></div>
+
+        <template x-for="card in $store.dealerCards.items">
+            <div class="card col-span-1" >
+              <figure
+                  class="p-2 rounded-xl shadow-xl"
+                  :id="`${card.num}`">
+                <img
+                    :src="card.image" class=""
+                    :style="card.open ? 'visibility: visible' : 'visibility: hidden'"
+                    :id="`${card.num}`"
+                    x-transition
+                />
+              </figure>
+              </div>
+        </template>
+
+    <div class="card col-span-1"></div>
+    </div> <!-- dealer cards -->
+
+    <div x-data id="cards" class="grid grid-cols-7 gap-4 pt-10">
+
+      <div class="card col-span-1"></div>
+
+          <template x-for="card in $store.cards.items">
+              <div class="card col-span-1" >
+                <figure
+                    class="p-2 rounded-xl shadow-xl"
+                    x-on:click="id = $event.target.getAttribute('id'); $store.cards.items[id].open=true; finish()"
+                    :id="`${card.num}`">
+                  <img
+                      :src="card.image" class=""
+                      :style="card.open ? 'visibility: visible' : 'visibility: hidden'"
+                      :id="`${card.num}`"
+                      x-transition
+                  />
+                </figure>
+                <div class="card-body items-center text-center">
+                  <h1 class="text-2xl pt-1 pb-2" x-text="card.ticker"
+                  :style="card.open ? 'visibility: visible' : 'visibility: hidden'"
+                  ></h1>
+                  <p x-text="card.name"
+                  :style="card.open ? 'visibility: visible' : 'visibility: hidden'"
+                  ></p>
+                  <h2
+                      class="py-1 pl-10 pr-10 text-white rounded"
+                      :style="card.open ? 'visibility: visible' : 'visibility: hidden'"
+                      :class="card.color"
+                      x-text="card.margin + '%'">
+                  </h2>
+                </div>
+              </div>
+          </template>
+
+    <div class="card col-span-1"></div>
+
+    </div> <!-- cards -->
+
+    <div x-data id="cards" class="grid grid-cols-7 gap-4 pt-10 pb-10">
+      <div class="card col-span-1"></div>
+    <div class="flex justify-center col-span-5">
+        <button class="btn btn-block items-center bg-base-content text-white" x-on:click="finish(true)">Идеально!</button>
+      </div>
+        <div class="card col-span-1"></div>
+    </div>
+
+    <!-- modal -->
+
+    <dialog id="results_modal" class="modal">
+    <div class="modal-box" x-data="{}">
+        <h3 class="font-bold text-lg" x-text="$store.modalHeader.value">И кто же тут красавчик?</h3>
+        <p class="py-4" x-html="$store.modalText.value"></p>
+        <div class="modal-action">
+          <form method="dialog">
+            <!-- if there is a button in form, it will close the modal -->
+            <button class="btn">Прекрасно!</button>
+          </form>
+        </div>
+    </div>
+    </dialog>
+
+</div>
+
+</body>
+</html>
